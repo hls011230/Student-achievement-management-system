@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生成绩管理</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="http://localhost:3000/js/echarts.min.js"></script>
+    <style>
+      .regist{
+        border: 1px solid #eee;
+        padding: 0 20px 20px 20px;
+  
+        margin-top:30px;
+        border-radius: 4px;
+        box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+      }
+      .regist h2{
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+      .strongBox {
+        margin: 10px 0;
+        padding: 5px 8px;
+        font-size: 12px;
+      }
+      #main{
+          width: 100%;
+          margin: 150 auto;
+          height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">学生成绩管理</a>
+        </div>
+        
+        <div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li><a href="/teacher">本学期教学目标</a></li>
+            <li ><a href="/teacher/score_ctr">学生成绩录入</a></li>
+            <li ><a href="/teacher/score_form">学生成绩表</a></li>
+            <li class="active"><a href="#">学期成绩报告</a></li>
+            <li ><a href="/teacher/score_rank">学生总成绩排名</a></li>
+          </ul>
+  
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li ><a href="/teacher/myself" target="_blank">欢迎您 <%= username %> 老师 </a></li>
+            <li ><a href="/t_login"> 退出</a></li>
+          </ul>
+        </div>
+      </div>
+      
+    </nav>
+    <div id="main"> </div>
+    <script src="http://localhost:3000/js/jquery.min.js"></script>
+</body>
+</html>
+<script>
+$.ajax({
+  type:"GET",
+  url : "/teacher/s_result",
+  async: false,
+  success:function(data){
+    
+
+  }
+})
+
+var app = {};
+
+var chartDom = document.getElementById('main');
+var myChart = echarts.init(chartDom);
+var option;
+
+option = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+        source: [
+            ['product', 'B200601', 'B200602', 'B200603','B200604'],
+            ['JAVA', 43.3, 85.8, 93.7,99],
+            ['Web', 83.1, 73.4, 55.1,99],
+            ['MySQL', 86.4, 65.2, 82.5,99],
+            ['数据结构与算法', 72.4, 53.9, 39.1,99],
+            ['Go', 72.4, 53.9, 39.1,99]
+        ]
+    },
+    xAxis: {type: 'category'},
+    yAxis: {},
+    // Declare several bar series, each will be mapped
+    // to a column of dataset.source by default.
+    series: [
+        {type: 'bar'},
+        {type: 'bar'},
+        {type: 'bar'},
+        {type: 'bar'}
+    ]
+};
+
+option && myChart.setOption(option);
+
+</script>

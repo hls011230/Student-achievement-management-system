@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师登录</title>
+    <link rel="stylesheet" href="http://localhost:3000/css/bootstrap.css">
+    <style>
+        .regist{
+          border: 1px solid #eee;
+          padding: 0 20px 20px 20px;
+    
+          margin-top:30px;
+          border-radius: 4px;
+          box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+        }
+        .regist h2{
+          margin-bottom: 20px;
+          font-size: 24px;
+        }
+        .strongBox {
+          margin: 10px 0;
+          padding: 5px 8px;
+          font-size: 12px;
+        }
+        /* body{
+            background-image: url('img/2.png');
+        } */
+        .wid{
+          width: 240px;
+        }
+        input{
+          margin-left: 242px;
+        }
+      </style>
+</head>
+<body class="text-center">
+    <div class="regist col-xs-6  col-md-offset-3">
+        <main class="form-signin">
+          <form>
+            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+            <div class="form-floating">
+              <label for="floatingInput">Job Number</label>
+              <input type="text" class="form-control wid text-center" id="username" placeholder="教师工号">
+              
+            </div>
+            <div class="form-floating">
+              <label for="floatingPassword">Password</label>
+              <input type="password" class="form-control wid text-center" id="password" placeholder="Password">
+              
+            </div>
+          </form>
+        </main>
+        <br>
+        <button id="btn" class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+      </div>
+      <script src="http://localhost:3000/js/jquery.min.js"></script>
+      <script src="http://localhost:3000/js/t_login.js"></script>
+</body>
+</html>

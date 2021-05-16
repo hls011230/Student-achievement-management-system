@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生注册</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <style>
+        .regist{
+          border: 1px solid #eee;
+          padding: 0 20px 20px 20px;
+    
+          margin-top:30px;
+          border-radius: 4px;
+          box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+        }
+        .regist h2{
+          margin-bottom: 20px;
+          font-size: 24px;
+        }
+
+        a{
+            color: rgb(131, 175, 226);
+        }
+       
+      </style>
+    
+    </head>
+    <body>
+
+            <!-- 注册 -->
+        <div class="regist col-xs-6  col-md-offset-3" >
+            <h2>注册账号</h2>
+            <form>
+                <div class="form-group">
+                    <label class="control-label" for="exampleInputEmail1">邮箱：</label>
+                    <input type="email" class="form-control" id="email" autofocus placeholder="请输入邮箱地址">
+                </div>
+                <div class="form-group">
+                    <label class="control-label"  for="exampleInputUsername1">用户名：</label>
+                    <input type="text" class="form-control" id="username" placeholder="请输入你的用户名">
+                </div>
+                <div class="form-group">
+                    <label class="control-label"  for="exampleInputRealname1">真实姓名：</label>
+                    <input type="text" class="form-control" id="realname" placeholder="请输入你的真实姓名">
+                </div>
+                <div class="form-group">
+                    <label class="control-label"  for="exampleInputPhone">手机号码：</label>
+                    <input type="number" class="form-control" id="phone" placeholder="请输入你的手机号码">
+                </div>
+                <div class="form-group">
+                    <label class="control-label"  for="exampleInputSex">性别：</label>
+                    <select class="form-control"  id="sex">
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"  for="exampleInputPassword1">密码：</label>
+                    <input type="password" class="form-control" id="password" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label class="control-label"  for="exampleInputPassword1">重复密码：</label>
+                    <input type="password" class="form-control" id="repeatPassword" placeholder="请再次输入密码">
+                </div>
+            
+            </form>
+            <button id="btn" class="btn-primary">提交</button>
+            <a href="/login">取消注册</a>
+        </div>
+      
+      <script src="js/jquery.min.js"></script>
+      <script src="js/regist.js"></script>
+    </body>
+    </html>

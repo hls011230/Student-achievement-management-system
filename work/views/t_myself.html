@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人页面</title>
+    <link rel="stylesheet" href="http://localhost:3000/css/bootstrap.css">
+    <link href="http://localhost:3000/assets/css/global-plugins.css" rel="stylesheet">
+    <!-- <link href="http://localhost:3000/jquery-icheck/skins/all.css" rel="stylesheet" /> -->
+   
+    
+
+    <!-- This page plugin css start -->
+    <link href="http://localhost:3000/assets/vendors/maps/css/jquery-jvectormap-2.0.1.css" rel="stylesheet" type="text/css"/>
+    <link href="http://localhost:3000/assets/vendors/morris-chart/morris.css" rel="stylesheet" >
+    <link href="http://localhost:3000/assets/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <link href="http://localhost:3000/assets/vendors/jquery-ricksaw-chart/css/rickshaw.css" rel="stylesheet"/>
+    <link href="http://localhost:3000/assets/css/flot-chart.css" rel="stylesheet"/>
+    <!-- This page plugin css end -->
+
+    <!-- Custom styles for this template -->
+    <link href="http://localhost:3000/assets/css/theme.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/style-responsive.css" rel="stylesheet"/>
+    <link href="http://localhost:3000/assets/css/class-helpers.css" rel="stylesheet"/>
+
+    <!--Color schemes-->
+    <link href="http://localhost:3000/assets/css/colors/green.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/turquoise.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/blue.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/amethyst.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/cloud.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/sun-flower.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/carrot.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/alizarin.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/concrete.css" rel="stylesheet">
+    <link href="http://localhost:3000/assets/css/colors/wet-asphalt.css" rel="stylesheet">
+
+    <!--Fonts-->
+    <link href="http://localhost:3000/assets/fonts/Indie-Flower/indie-flower.css" rel="stylesheet" />
+    <link href="http://localhost:3000/assets/fonts/Open-Sans/open-sans.css?family=Open+Sans:300,400,700" rel="stylesheet" />
+</head>
+<body>
+    <aside>
+        <div id="sidebar" class="nav-collapse md-box-shadowed">
+            <!-- sidebar menu start-->
+            <div class="leftside-navigation leftside-navigation-scroll">
+                <ul class="sidebar-menu" id="nav-accordion" style="padding-top: 40px">
+                    <li class="sidebar-profile">
+                        
+                        <div class="profile-main">
+                            <p class="text-right profile-options"><i class="profile-options-open icon-options-vertical fa-2x"></i></p>
+                            <p class="image">
+                                <img alt="image" src="http://localhost:3000/assets/images/profile.jpg" width="80">
+                                <span class="status"><i class="fa fa-circle text-success"></i></span>
+                            </p>
+                            <p>
+                                <span class="name"><%= username%></span><br>
+                                <span class="position" style="font-family: monospace;">Administrator</span>
+                            </p>
+                        </div>
+                        <li class='sub-menu '><a href="1" class="hvr-bounce-to-right-sidebar-parent"><span class='icon-sidebar pe-7s-note fa-2x'></span><span>个人信息</span></a>
+                            <ul class='sub'>
+                                <li><a href='fonts/font-awesome.html'>个人简介</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </li>
+                </ul>
+            </div>
+    </aside>
+
+    <section id="main-content">
+           
+            <div class="c_panel bg-white padding-25">
+                <div id="map-events" style="width:100%;height:670px;">
+                    <table id="example1" class="table table-bordered table-striped table-hover dataTable" role="grid"
+                    aria-describedby="example1_info">
+                        <tr>
+                            <td>教师姓名</td>
+                            <td><%= username%></td>
+                        </tr>
+                        <tr>
+                            <td>教师电话</td>
+                            <td><%= phone%></td>
+                        </tr>
+                        <tr>
+                            <td>教师工号</td>
+                            <td><%= jobno%></td>
+                        </tr>
+                        <tr>
+                            <td>教师邮箱</td>
+                            <td><%= email%></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+    </section>
+    
+</body>
+</html>
+<script>
+   
+</script>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    body{
+      background: #CDCDCD;
+    }
+    .topHeader{
+      height: 50px;
+      background: #333;
+      background: rgba(47,47,47,0.98);
+      position:fixed;
+      top: 0;
+      width: 100%;
+    }
+    .topHeader .header{
+      width: 600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+    }
+    .topHeader .header h1{
+      width: 100px;
+      line-height: 50px;
+      font-weight: normal;
+      color: #DDD;
+      font-size: 24px;
+      cursor: pointer;
+      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    .topHeader .header input{
+      float: right;
+      width: 60%;
+      height: 24px;
+      margin-top: 12px;
+      text-indent: 10px;
+      border-radius: 5px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.24), 0 1px 6px rgba(0,0,0,0.45) inset;
+      border: none;
+    }
+    ul,li{
+      list-style: none;
+      line-height: 1.6;
+    }
+    ul{
+      padding: 10px 0;
+    }
+    ul li{
+      background: #fff;
+      margin: 10px 0;
+      padding: 5px;
+      border-left:5px solid #629A9C;
+      border-radius: 4px;
+      position: relative;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+    }
+    ul li .itemBtn{
+      position: absolute;
+      top: 2px;
+      right: 5px;
+      display: inline-block;
+      width: 14px;
+      height: 12px;
+      border-radius: 14px;
+      border: 6px double #FFF;
+      background: #CCC;
+      line-height: 14px;
+      text-align: center;
+      color: #FFF;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    #unTodoList li {
+      opacity: 0.5;
+      border-left: 5px solid #999
+    }
+    ul li .checkdone{
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    ul li b {
+      margin-right: 10px;
+      cursor: move;
+    }
+    .warp{
+      padding: 10px;
+      width: 600px;
+      margin: 50px auto;
+    }
+    .warp .status{
+      display: flex;
+      justify-content: space-between;
+    }
+    .warp .status .num{
+      display: inline-block;
+      padding: 0 5px;
+      height: 20px;
+      border-radius: 20px;
+      background: #E6E6FA;
+      line-height: 22px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topHeader">
+    <div class="header">
+      <h1>TodoList</h1>
+      <input type="text"  id="todoText">
+    </div>
+  </div>
+  <div class="warp">
+    <div class="status">
+      <h2>正在进行</h2>
+      <span id="undone" class="num">0</span>
+    </div>
+    
+    <ul id="todoList" class="todo">
+    </ul>
+    <div class="status">
+      <h2>已经完成</h2>
+      <span  id="done" class="num">0</span>
+    </div>
+    <ul id="unTodoList" class="todo">
+    </ul>
+  </div>
+  <script src="http://localhost:3000/js/jquery.min.js"></script>
+  <script src="http://localhost:3000/js/jquery-ui.min.js"></script>
+  <script>
+    function loadTodos() {
+       // get请求，查询所有的数据
+      $.get("/todolist",function(data){
+         // 获取已做和未做的数据状态
+        var undone = 0;
+        var done = 0;
+        for(var i = 0; i < data.data.length; i++) {
+          if(data.data[i].done == 1) {
+            done ++;
+          } else {
+            undone ++;
+          }
+        };
+        // 设置已做和未做的状态
+        $("#undone").html(undone);
+        $("#done").html(done);
+        console.log(done,undone)
+        // 得到所有的数据之前先清空页面
+        $("#todoList").empty();
+        $("#unTodoList").empty();
+        for(var i = 0; i < data.data.length; i ++){
+          // $("#todoList").append($("<li>"+data.data[i].title+"</li>"))
+          new TodoItem(data.data[i]);
+        }
+      })
+    }
+    // 初始化请求
+    loadTodos();
+
+    // post请求,键盘回车的时候提交表单数据
+    $("#todoText").on("keydown",function(event){
+      if(event.keyCode == 13) {
+        if(!$("#todoText").val()) {
+          alert("请填写数据后提交");
+          return;
+        }
+        $.post("/todolist",{"title": $("#todoText").val()},function(data){
+          if(data.status == 'success') {
+            // 清空输入框
+            $("#todoText").val("");
+            // 重新加载所有的db 数据
+            loadTodos()
+          }
+        })
+      }
+    });
+
+    function TodoItem(item) {
+      // 设置CheckBox的初始状态
+      var done = item.done == "1" ? "checked" : "";
+      // 造结构，每一条代表事项自己的功能
+      this.$dom = $("<li data-id="+item.id+"><input type='checkbox' "+done+" class='checkdone'><b>"+item.title+"</b><input class='patchVal' style='display:none' value="+item.title+" type='text' ><a class='itemBtn' data-id="+item.id+">-</a></li>");
+      
+      // 追加节点上树，追加节点上树的时候是根据item.done决定的，如果done为1，追加的是 #unTodoList节点，否则是#todoList
+      if(item.done == "1") {
+        $("#unTodoList").append(this.$dom);
+      } else {
+        $("#todoList").append(this.$dom);
+      }
+      
+    }
+
+    // 使用事件代理去解决动态节点动态上树的问题，因为初始化页面的时候li标签是得不到的
+    $(".todo").delegate(".itemBtn","click",function(){
+      // 删除db数据
+      $.ajax({
+        "type":"DELETE",
+        "url": "/todolist",
+        "data":{
+          "id": $(this).data("id") //携带要删除的id
+        },
+        "success":function(data){
+          if(data.status == 'success'){
+            // 重新加载所有的db 数据
+            loadTodos()
+          }
+        }
+      })
+    });
+
+    // 点击b标签切换显隐状态
+    $(".todo").delegate("b","click",function(){
+      // b标签自己隐藏
+      $(this).hide();
+      // 兄弟input 显示
+      $(this).siblings(".patchVal").show();
+    });
+
+    // 当patchVal标签失去焦点的时候，b标签显示，发送请求修改db数据
+    $(".todo").delegate(".patchVal","blur",function(){
+      // b标签自己隐藏
+      $(this).hide();
+      // 兄弟input 显示
+      $(this).siblings("b").show();
+      // 通过兄弟标签.itemBtn的data-id获取要修改的db数据id值
+      var id = $(this).siblings(".itemBtn").data("id");
+      console.log(id,'id')
+      // 发送请求修改已有的数据
+      $.ajax({
+        "type": "PATCH",
+        "url": "/todolist",
+        "data":{
+          "id":id,
+          "key": "title", //修改的是db数据title属性
+          "value": $(this).val()
+        },
+        "success": function(data){
+          console.log(data,'data')
+          if(data.status == "success") {
+            // 重新加载数据
+            loadTodos()
+          }
+        }
+      })
+    });
+
+    // 修改已做和未做的状态
+    $(".todo").delegate(".checkdone","change",function(event){
+      // 通过兄弟标签.itemBtn的data-id获取要修改的db数据id值
+      var id = $(this).siblings(".itemBtn").data("id");
+      // 获取当前要切换状态是已做还是未做
+      var checked = event.target.checked
+      $.ajax({
+        "type": "PATCH",
+        "url": "/todolist",
+        "data":{
+          "id": id,
+          "key": "done", //修改的是db数据done属性
+          "value": checked ? "1" : "0"
+        },
+        "success":function(data){
+          // 重新加载数据
+          loadTodos()
+        }
+      })
+    });
+  </script>
+</body>
+</html>

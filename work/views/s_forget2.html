@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>忘记密码</title>
+    <link rel="stylesheet" href="http://localhost:3000/css/forget.css">
+    <link rel="stylesheet" href="http://localhost:3000/css/bootstrap.css">
+    <script src="http://localhost:3000/js/jquery.min.js"></script>
+</head>
+<body>
+    <div class="content">
+
+        <div class="web-width">
+       
+         <div class="for-liucheng">
+       
+          <div class="liulist for-cur"></div>
+       
+          <div class="liulist for-cur"></div>
+       
+          <div class="liulist"></div>
+       
+          <div class="liulist"></div>
+       
+          <div class="liutextbox">
+       
+           <div class="liutext for-cur"><em>1</em><br />
+       
+            <strong>填写账户名</strong></div>
+       
+           <div class="liutext for-cur"><em>2</em><br />
+       
+            <strong>验证身份</strong></div>
+       
+           <div class="liutext"><em>3</em><br />
+       
+            <strong>设置新密码</strong></div>
+       
+           <div class="liutext"><em>4</em><br />
+       
+            <strong>完成</strong></div>
+       
+          </div>
+       
+         </div>
+       
+         <div class="forget-pwd">
+            <dl>
+       
+                <dt>邮箱：</dt>
+            
+                <dd>
+            
+                 <input type="email" name="email" id="email"/>
+
+                 <button id="send_code">发送验证码</button>
+            
+                </dd>
+            
+                <div class="clears"></div>
+            
+               </dl>
+       
+          <dl>
+       
+           <dt>邮箱验证码</dt>
+       
+           <dd>
+       
+            <input type="number" name="ver_code" id="ver_code" />
+       
+           </dd>
+       
+           <div class="clears"></div>
+       
+          </dl>
+       
+          
+          <div class="btn btn-warning" style="margin-left:  160px;">
+       
+            <button id="next">下一步</button>
+        
+           </div>
+       
+         </div>
+       
+        </div>
+       
+       </div>
+</body>
+</html>
+<script>
+    $("#send_code").click(function(){
+        
+
+        $.ajax({
+        type:"POST",
+        url :"/student_forget_password/send",
+        data:{"email":$("#email").val()},
+        async:false,
+        success:function(data){
+            if(data.status == 1){
+                alert("验证码已发送")
+            }
+     }
+ })
+ })
+
+    $("#next").click(function(){
+        $.post("/student_forget_password/2",{"email":$("#email").val(),"ver_code":$("#ver_code").val()},function(data){
+            if(data.status == 1){
+                window.location = "/student_forget_password/3"
+            }else{
+                alert("验证码错误")
+            }
+        })
+    })
+</script>
