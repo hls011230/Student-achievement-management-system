@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生成绩管理</title>
+    <link rel="stylesheet" href="http://localhost:3000/css/bootstrap.min.css">
+    <style>
+      .regist{
+        border: 1px solid #eee;
+        padding: 0 20px 20px 20px;
+  
+        margin-top:30px;
+        border-radius: 4px;
+        box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+      }
+      .regist h2{
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+      .strongBox {
+        margin: 10px 0;
+        padding: 5px 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">学生成绩管理</a>
+        </div>
+        
+        <div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li><a href="/teacher">本学期教学目标</a></li>
+            <li ><a href="/teacher/score_ctr">学生成绩录入</a></li>
+            <li class="active"><a href="/teacher/score_form">学生成绩表</a></li>
+            <li ><a href="/teacher/score_result">学期成绩报告</a></li>
+            <li ><a href="/teacher/score_rank">学生总成绩排名</a></li>
+          </ul>
+  
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li ><a href="/teacher/myself" target="_blank">欢迎您 <%= username %> 老师 </a></li>
+            <li ><a href="/t_login"> 退出</a></li>
+          </ul>
+        </div>
+      </div>
+      
+    </nav>
+
+    <div class="form-group" style="display: flex; flex:2">
+      <input id="s_name" type="text" class="form-control" placeholder="学生姓名" style="margin-left: 10px; width: 150px;">
+      <button type="submit" class="btn btn-default" id="dim_check">查询</button>
+    </div>
+    
+
+    <div class="">
+      <div class="col-sm-12">
+        <table id="example1" class="table table-bordered table-striped table-hover dataTable" role="grid"
+          aria-describedby="example1_info">
+          <thead>
+            <tr role="row">
+              <th aria-label="学生学号" style="width: 149.8px;">学生学号</th>
+              <th aria-label="学生姓名" style="width: 192.04px;">学生姓名</th>
+              <th aria-label="课程名称" style="width: 175.4px;">课程名称</th>
+              <th aria-label="成绩" style="width: 128.68px;">成绩</th>
+            <th style="width:90px">操作</th>
+            </tr>
+          </thead>
+          <tbody id="showdata">
+             
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <button id="write">xlsx文件写入</button>
+
+
+    <script src="http://localhost:3000/js/jquery.min.js"></script>
+</body>
+</html>
+<script>
+function loadData(){
+    $.get("/teacher/s_ctr",function(data){
+      if(data.status == "success"){
+        $("#showdata").empty();
+        for(var i = 0 ; i < data.data.length; i ++){
+          new DataItem(i,data.data[i]);
+        }
+      }
+    })
+  }
+  
+  function DataItem(i,item) {
+    this.$dom = $("<tr role='row'><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.courseName+"</td><td><b id=b"+i+">"+item.score+"</b><input data-course="+item.courseName+" data-sno="+item.sno+" id=i"+i+" class='patchVal' style='display:none' value="+item.score+" type='text' ></td><td><input data-id="+i+" type='button' class='btn btn-default itemUpdata' value='修改' /><input type='button'  class='btn btn-default itemBtn' data-course="+item.courseName+" data-sno="+item.sno+" value='删除' /></td></tr>");
+    $("#showdata").append(this.$dom);
+  }
+
+loadData();
+
+//增加
+  $("#posBtn").click(function(){
+    $.post("/teacher/score_ctr",{"course":$("#course").val(),"sno":$("#sno").val(),"score":$("#score").val()},function(data){
+        if(data.status == "success"){
+          alert("添加成功");
+          loadData();
+        }else{
+          alert("添加失败")
+        }
+    })
+  })
+
+//删除
+$("#showdata").delegate(".itemBtn","click",function(){
+      $.ajax({
+        "type":"DELETE",
+        "url": "/teacher/score_ctr",
+        "data":{
+          "sno": $(this).data("sno"),
+          "course":$(this).data("course")
+        },
+        "success":function(data){
+          if(data.status == 'success'){
+            // 重新加载所有的db 数据
+            alert("成功删除")
+            loadData();
+      }else{
+        alert("删除失败")
+      }
+    }
+  })
+});
+
+//修改成绩
+$("#showdata").delegate(".itemUpdata","click",function(){
+  var num = $(this).data("id")
+  $("#b"+num+"").hide();
+  $("#i"+num+"").show();
+})
+$("#showdata").delegate(".patchVal","blur",function(){
+  $(this).hide();
+  $(this).siblings("b").show();
+  $.ajax({
+        "type": "PATCH",
+        "url": "/teacher/score_ctr",
+        "data":{
+          "sno": $(this).data("sno"),
+          "course":$(this).data("course"),
+          "score":$(this).val()
+        },
+        "success": function(data){
+          if(data.status == "success") {
+            // 重新加载数据
+            loadData();
+          }
+        }
+      })
+})
+
+$("#dim_check").click(function(){
+  $.post("/teacher/s_ctr",{"d":$("#s_name").val()},function(data){
+      if(data.status == "success"){
+      console.log(data.data)
+        $("#showdata").empty();
+        for(var i = 0 ; i < data.data.length; i ++){
+          new DataItem(i,data.data[i]);
+        }
+      }
+    })
+})
+
+$("#write").click(function(){
+  $.post("/teacher/write_in",function(data){
+      if(data.status == "success"){
+      alert("chenggong")
+      }
+    })
+})
+
+
+</script>

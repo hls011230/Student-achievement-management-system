@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生成绩管理</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="http://localhost:3000/js/echarts.min.js"></script>
+    <style>
+      .regist{
+        border: 1px solid #eee;
+        padding: 0 20px 20px 20px;
+  
+        margin-top:30px;
+        border-radius: 4px;
+        box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+      }
+      .regist h2{
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+      .strongBox {
+        margin: 10px 0;
+        padding: 5px 8px;
+        font-size: 12px;
+      }
+      #main{
+          width: 100%;
+          margin: 150 auto;
+          height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">学生成绩管理</a>
+        </div>
+        
+        <div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li><a href="/teacher">本学期教学目标</a></li>
+            <li ><a href="/teacher/score_ctr">学生成绩录入</a></li>
+            <li ><a href="/teacher/score_form">学生成绩表</a></li>
+            <li class="active"><a href="#">学期成绩报告</a></li>
+            <li ><a href="/teacher/score_rank">学生总成绩排名</a></li>
+          </ul>
+  
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li ><a href="/teacher/myself" target="_blank">欢迎您 <%= username %> 老师 </a></li>
+            <li ><a href="/t_login"> 退出</a></li>
+          </ul>
+        </div>
+      </div>
+      
+    </nav>
+    <div class="form-group">
+      <label class="control-label"  for="exampleInputSex">选择科目进行对比</label>
+      <select class="form-control"  id="select_course" >
+      </select>
+    <div id="main"> </div>
+    <script src="http://localhost:3000/js/jquery.min.js"></script>
+</body>
+</html>
+<script>
+  
+
+  var arr1 = [];
+  var arr2 = [];
+  var arr3 = ["product"];
+  var arr4 = [];
+$.ajax({
+  type:"GET",
+  url : "/teacher/s_course",
+  async: false,
+  success:function(data){
+    if(data.status == "success"){
+        for(var i = 0 ; i < data.data.length; i ++){
+          new DataOption(i,data.data[i]);
+        }
+      }
+  }
+})
+$.ajax({
+  type:"GET",
+  url : "/teacher/s_result",
+  async: false,
+  success:function(data){
+    console.log(data.data)
+    arr1 = data.data;
+  }
+})
+var $inputCpurse = $("#select_course");
+
+for(let i in arr1){
+      if(arr3.indexOf(arr1[i].class)==-1){
+        arr3.push(arr1[i].class)
+        arr4.push({type: 'bar'})
+      }
+  }
+
+
+  
+
+
+  
+
+
+$inputCpurse.blur(function(){
+  first();
+})
+
+first();
+function first(){
+  if(true){
+  var arr = [$inputCpurse.val()]
+  for(let i in arr1){
+      if(arr1[i].courseName==$inputCpurse.val()){
+        arr.push(arr1[i].ag)
+      }
+  }
+  arr2 = arr;
+}
+    var app = {};
+
+  var chartDom = document.getElementById('main');
+  var myChart = echarts.init(chartDom);
+  var option;
+
+  option = {
+      legend: {},
+      tooltip: {},
+      dataset: {
+          source: [
+              arr3,
+              arr2
+              
+          ]
+      },
+      xAxis: {type: 'category'},
+      yAxis: {},
+      // Declare several bar series, each will be mapped
+      // to a column of dataset.source by default.
+      series: arr4
+  };
+
+  option && myChart.setOption(option);
+
+}
+
+  
+function DataOption(i,item) {
+  this.$dom = $("<option>"+item.courseName+"</option>");
+  $("#select_course").append(this.$dom);
+}
+
+
+
+
+    
+
+
+</script>

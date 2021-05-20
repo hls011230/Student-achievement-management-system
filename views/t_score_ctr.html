@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生成绩管理</title>
+    <link rel="stylesheet" href="http://localhost:3000/css/bootstrap.min.css">
+    <style>
+      .regist{
+        border: 1px solid #eee;
+        padding: 0 20px 20px 20px;
+  
+        margin-top:30px;
+        border-radius: 4px;
+        box-shadow: 0px 0px 3px rgba(0,0,0,0.1);
+      }
+      .regist h2{
+        margin-bottom: 20px;
+        font-size: 24px;
+      }
+      .strongBox {
+        margin: 10px 0;
+        padding: 5px 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">学生成绩管理</a>
+        </div>
+        
+        <div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li><a href="/teacher">本学期教学目标</a></li>
+            <li class="active"><a href="/teacher/score_ctr">学生成绩录入</a></li>
+            <li ><a href="/teacher/score_form">学生成绩表</a></li>
+            <li ><a href="/teacher/score_result">学期成绩报告</a></li>
+            <li ><a href="/teacher/score_rank">学生总成绩排名</a></li>
+          </ul>
+  
+          <ul class="nav navbar-nav" style="margin-right:50px">
+            <li ><a href="/teacher/myself" target="_blank">欢迎您 <%= username %> 老师 </a></li>
+            <li ><a href="/t_login"> 退出</a></li>
+          </ul>
+        </div>
+      </div>
+      
+    </nav>
+    <div>
+          <div class="form-group">
+            <label class="control-label"  for="exampleInputSex">选择学生考试科目</label>
+            <select class="form-control"  id="select_course" >
+            </select>
+          </div>  
+      </div>
+    </div>
+    <div class="">
+      <div class="col-sm-12">
+        <table id="example1" class="table table-bordered table-striped table-hover dataTable" role="grid"
+          aria-describedby="example1_info">
+          <thead>
+            <tr role="row">
+              <th aria-label="课程名称" style="width: 175.4px;">课程名称</th>
+              <th aria-label="学生学号" style="width: 149.8px;">学生学号</th>
+              <th aria-label="成绩" style="width: 128.68px;">成绩</th>
+            </tr>
+          </thead>
+          <tbody id="showdata">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <button class="btn btn-primary col-md-offset-5" id="posBtn">提交</button>
+
+
+    <script src="http://localhost:3000/js/jquery.min.js"></script>
+</body>
+</html>
+<script>
+$.get("/teacher/s_course",function(data){
+      if(data.status == "success"){
+        for(var i = 0 ; i < data.data.length; i ++){
+          new DataOption(i,data.data[i]);
+        }
+        first();
+      }
+})
+
+    
+var $inputCpurse = $("#select_course");
+$inputCpurse.blur(function(){
+  $("#showdata").empty();
+  for(var i = 0 ; i < 9; i ++){
+          new DataItem(i,$("#select_course").val());
+        }
+})
+
+function first(){
+  $("#showdata").empty();
+  for(var i = 0 ; i < 9; i ++){
+          new DataItem(i,$("#select_course").val());
+        }
+}
+
+
+  
+function DataOption(i,item) {
+  this.$dom = $("<option>"+item.courseName+"</option>");
+  $("#select_course").append(this.$dom);
+}
+function DataItem(i,item) {
+  this.$dom = $("<tr role='row'><td><b>"+item+"</b></td><td><input id=sno"+i+" type='text' class='form-control'  placeholder='请输入学生学号'/></td><td><input id=score"+i+" type='text' class='form-control score'  placeholder='请输入学生成绩'/></td>");
+  $("#showdata").append(this.$dom);
+}
+
+
+//增加
+  $("#posBtn").click(function(){
+    var arr  = [] ;
+    for(var i = 0 ; i < 9; i ++){
+         let obj = {"course":$("#select_course").val(),"sno":$("#sno"+i+"").val(),"score":$("#score"+i+"").val()};
+         arr.push(obj)
+    }
+
+    $.post("/teacher/score_ctr",{"data":arr},function(data){
+        if(data.status == "success"){
+          alert("数据添加成功");
+        }else{
+          alert("第"+data.data+"条数据添加失败")
+        }
+    })
+  })
+
+
+
+</script>
