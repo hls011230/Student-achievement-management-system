@@ -39,11 +39,40 @@ router.get("/score_ctr",function(req,res){
 });
 
 router.get("/s_ctr",function(req,res){
-  scoreCtr.checkScore(function(data){
-    res.json({
-      "status":"success",
-      "data": data
-    })
+  var cur_page = req.query.page;
+  scoreCtr.checkScore(jobno,function(data){
+      var showdata = [];
+      //分页处理
+      var num = 8; //一页条数
+      var current_page = cur_page;
+      if(current_page == 1){
+        for (var i = current_page-1 ; i < num ; i++){
+          showdata.push(data[i]);
+        }
+      }else{
+        for (var i = (current_page-1)*num ; i < (current_page-1)*num+num ; i++){
+          showdata.push(data[i]);
+        }
+      }
+      // 将得到的数据返回给前端
+      if(current_page < 1){
+        res.json({
+          "status":"under",
+          "total":Math.ceil(data.length/num)
+        })
+      }else if(current_page > Math.ceil(data.length/num)){
+        res.json({
+          "status":"beyond",
+          "page":Math.ceil(data.length/num),
+          "total":Math.ceil(data.length/num)
+        })
+      }else{
+        res.json({
+          "status":"success",
+          "data": showdata,
+          "total":Math.ceil(data.length/num)
+        })
+      }
   })
 })
 
@@ -66,6 +95,7 @@ router.get("/s_course",function(req,res){
   })
 })
 
+//增加学生成绩
 router.post("/score_ctr",async function(req,res){
     var obj = req.body.data;
     var count = 0;
@@ -92,6 +122,7 @@ router.get("/score_form",function(req,res) {
   })
 })
 
+//删除学生成绩
 router.delete("/score_ctr",function(req,res){
   var obj = req.body;
   scoreCtr.deleteScore(obj.course,obj.sno,function(data){
@@ -109,6 +140,8 @@ router.delete("/score_ctr",function(req,res){
   })
 })
 
+
+//修改学生成绩
 router.patch("/score_ctr",function(req,res){
   var obj = req.body;
   console.log(obj)

@@ -34,8 +34,8 @@ exports.scoreResult = async function (tid,callback) {
 
 
 //查询所有学生成绩
-exports.checkScore  = function(callback){
-var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score sc inner join student st on sc.sno = st.sno inner join course co on sc.courseNo = co.courseNo ';
+exports.checkScore  = function(jobno,callback){
+var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score sc inner join student st on sc.sno = st.sno inner join course co on sc.courseNo = co.courseNo where cur_teacher = '+jobno+'';
   User.query(query,function(err,rows){
     if(err){
         console.log(err);

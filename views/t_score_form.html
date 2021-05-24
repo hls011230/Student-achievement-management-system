@@ -76,20 +76,55 @@
         </table>
       </div>
     </div>
-    <button id="write">xlsx文件写入</button>
+    <div class="col-md-offset-5" style="position: absolute; bottom: 10px;">
+      <nav aria-label="Page navigation">
+        <ul class="pagination" id="paging">
+          
+        </ul>
+      </nav>
+    </div>
+
+
+
+
+
+    <!-- <button id="write">xlsx文件写入</button> -->
 
 
     <script src="http://localhost:3000/js/jquery.min.js"></script>
 </body>
 </html>
 <script>
+  var page = 1;
 function loadData(){
-    $.get("/teacher/s_ctr",function(data){
+    $.get("/teacher/s_ctr",{"page":page},function(data){
       if(data.status == "success"){
         $("#showdata").empty();
-        for(var i = 0 ; i < data.data.length; i ++){
-          new DataItem(i,data.data[i]);
+        $("#paging").empty();
+        $("#paging").append(`<li >
+      <a href="#" aria-label="Previous" data-id= 'last'>
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    
+    
+    <li id='first'>
+      <a href="#" aria-label="Next" data-id = 'next'>
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>`)
+        for(var l = 1 ; l <= data.total ; l ++){
+          $("#first").before(`<li ><a href="#" data-id = ${l} >${l}</a></li>`)
         }
+        for(var i = 0 ; i < data.data.length; i ++){
+          if(data.data[i]!=null){
+            new DataItem(i,data.data[i]);
+          } 
+        }
+      }else if(data.status == "beyond"){
+        alert("这是最后一页了！")
+      }else if(data.status == "under"){
+        alert("这是第一页了！")
       }
     })
   }
@@ -180,5 +215,20 @@ $("#write").click(function(){
     })
 })
 
+
+$("#paging").delegate("a","click",function(){
+  
+  if($(this).data("id")=="next"){
+    page ++;
+    loadData();
+  }else if($(this).data("id")=="last"){
+    page --;
+    loadData();
+  }else{
+    page = $(this).data("id")
+    loadData();
+  }
+      
+});
 
 </script>
