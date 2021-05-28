@@ -244,9 +244,6 @@ var fn =  function(){
     
   }
 
-
-
-
   // 添加校验方法
   function warnFun(dom,value) {
     dom.parent().addClass("has-error");
@@ -288,7 +285,6 @@ var fn =  function(){
       warnFun($password,"密码长度区间为8-20位")
       flag = false;
     } 
-
     // 判断密码的合法性，只允许输入数字，字母和部分符号
     if(/[^0-9a-zA-Z\`\!\@\#\$\%\^\&\*\(\)\_\+\{\}\,\.\/\"\:\;]/g.test(password)){
       warnFun($password,"密码仅限于入数字、字母和符号 !@#$%^&*()_+{},./:;")

@@ -99,6 +99,7 @@
 function loadData(){
     $.get("/teacher/s_ctr",{"page":page},function(data){
       if(data.status == "success"){
+        console.log(data.data)
         $("#showdata").empty();
         $("#paging").empty();
         $("#paging").append(`<li >
@@ -123,6 +124,8 @@ function loadData(){
         }
       }else if(data.status == "beyond"){
         alert("这是最后一页了！")
+        page = page-1;
+        loadData();
       }else if(data.status == "under"){
         alert("这是第一页了！")
       }

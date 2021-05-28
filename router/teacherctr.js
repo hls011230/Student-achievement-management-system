@@ -76,6 +76,7 @@ router.get("/s_ctr",function(req,res){
   })
 })
 
+
 router.post("/s_ctr",function(req,res){
   var name = req.body.d
   scoreCtr.dim_checkScore(name,function(data){
