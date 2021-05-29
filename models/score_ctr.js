@@ -99,6 +99,20 @@ exports.updataScore = function(sno,course,score,callback){
     })
 }
 
+//查询学生总分的年段排名
+exports.selectRank = function(callback){
+    var query = 'SELECT st.class,r.sno,st.realname1,r.total,r.rnk from (SELECT *,(SELECT count(DISTINCT total) FROM (select sno,sum(score) total from score GROUP BY sno) b WHERE a.total<b.total)+1 AS rnk FROM (select sno,sum(score) total from score GROUP BY sno) AS a ORDER BY rnk) r inner join student st on r.sno =st.sno ORDER BY r.rnk '
+    User.query(query,function(err,rows) {
+        if(err){
+            callback("err");
+            return ;
+        }else{
+            callback(rows);
+        }
+    })
+
+}
+
 //将学生成绩表的内容写入xlsx文件
 
 exports.innerXlsx  = function(tid,callback){

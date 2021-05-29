@@ -33,9 +33,13 @@ router.get("/t",function(req,res){
 
 //学生成绩录入
 router.get("/score_ctr",function(req,res){
-    res.render("t_score_ctr",{
+    if(username1){
+      res.render("t_score_ctr",{
         username: username1
     })
+  }else{
+    res.render('t_login');
+  }
 });
 
 router.get("/s_ctr",function(req,res){
@@ -118,9 +122,13 @@ router.post("/score_ctr",async function(req,res){
 })
 
 router.get("/score_form",function(req,res) {
-  res.render("t_score_form",{
-    username: username1
-  })
+  if(username1){
+    res.render("t_score_form",{
+      username: username1
+    })
+}else{
+  res.render('t_login');
+}
 })
 
 //删除学生成绩
@@ -162,17 +170,22 @@ router.patch("/score_ctr",function(req,res){
 })
 
 
-
-
-
+//学期任务界面
 router.get("/todolist",function(req,res){
   res.render("tolist")
 })
 
+
+//学生成绩查删改
 router.get("/score_result",function(req,res){
-    res.render("t_score_result",{
-       username: username1
-    })
+    if(username1){
+      res.render("t_score_result",{
+        username: username1
+     })
+  }else{
+    res.render('t_login');
+  }
+    
 })
 
 router.get("/s_result",function (req,res) {
@@ -185,33 +198,48 @@ router.get("/s_result",function (req,res) {
   
 })
 
-
 router.get("/score_rank",function(req,res){
-  res.render("t_score_rank",{
-     username: username1
+    if(username1){
+      res.render("t_score_rank",{
+        username: username1
+    })
+  }else{
+    res.render('t_login');
+  }
+  
+})
+
+router.get("/select_rank",function(req,res){
+  scoreCtr.selectRank(function(data){
+    res.json({"data":data,"status":"success"})
   })
 })
 
 router.get("/myself",function(req,res){
-  res.render("t_myself",{
-    username: username1,
-    email:email,
-    phone:phone,
-    jobno:jobno
-  })
+  if(username1){
+    res.render("t_myself",{
+      username: username1,
+      email:email,
+      phone:phone,
+      jobno:jobno
+    })
+}else{
+  res.render('t_login');
+}
 })
 
 router.post("/myself",upload.single("upload"),function(req,res){
   res.json({"status":1})
 })
 
+
+//将学生成绩写入excel文件
 router.post("/write_in",function(req,res){
   scoreCtr.innerXlsx(jobno,function(data){
     if(data == "ok"){
       res.json({"status":"success"})
     }
   })
-  
 })
 
 module.exports = router;

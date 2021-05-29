@@ -115,7 +115,7 @@ function DataOption(i,item) {
   $("#select_course").append(this.$dom);
 }
 function DataItem(i,item) {
-  this.$dom = $("<tr role='row'><td><b>"+item+"</b></td><td><input id=sno"+i+" type='text' class='form-control'  placeholder='请输入学生学号'/></td><td><input id=score"+i+" type='text' class='form-control score'  placeholder='请输入学生成绩'/></td>");
+  this.$dom = $("<tr role='row'><td><b>"+item+"</b></td><td><input id=sno"+i+" type='text' class='form-control sno'  placeholder='请输入学生学号'/></td><td><input id=score"+i+" type='text' class='form-control score'  placeholder='请输入学生成绩'/></td>");
   $("#showdata").append(this.$dom);
 }
 
@@ -131,6 +131,8 @@ function DataItem(i,item) {
     $.post("/teacher/score_ctr",{"data":arr},function(data){
         if(data.status == "success"){
           alert("数据添加成功");
+          $(".sno").val("");
+          $(".score").val("");
         }else{
           alert("第"+data.data+"条数据添加失败")
         }

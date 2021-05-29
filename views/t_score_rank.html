@@ -50,7 +50,49 @@
       </div>
       
     </nav>
-    <h1>欢迎来到首页</h1>
-    <script src="js/jquery.min.js"></script>
+    
+
+    <div class="row">
+      <div class="col-sm-12">
+        <table id="example1" class="table table-bordered table-striped table-hover dataTable" role="grid"
+          aria-describedby="example1_info">
+          <thead>
+            <tr role="row">
+              <th aria-label="成绩" style="width: 128.68px;">班级</th>
+              <th aria-label="成绩" style="width: 128.68px;">学生学号</th>
+              <th aria-label="成绩" style="width: 128.68px;">学生姓名</th>
+              <th aria-label="课程名称" style="width: 175.4px;">总成绩</th>
+              <th aria-label="成绩" style="width: 128.68px;">年段排名</th>
+            </tr>
+          </thead>
+          <tbody id="showdata">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <script src="http://localhost:3000/js/jquery.min.js"></script>
+
+    <script>
+      function loadData(){
+    $.get("/teacher/select_rank",function(data){
+      if(data.status == "success"){
+        $("#showdata").empty();
+        for(var i = 0 ; i < data.data.length; i ++){
+          new DataItem(data.data[i]);
+        }
+      }
+    })
+  }
+  
+  function DataItem(item) {
+    this.$dom = $("<tr><td>"+item.class+"</td><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.total+"</td><td>"+item.rnk+"</td></tr>");
+    $("#showdata").append(this.$dom);
+  }
+
+loadData();
+    </script>
 </body>
 </html>

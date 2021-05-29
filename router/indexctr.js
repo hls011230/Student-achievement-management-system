@@ -42,6 +42,19 @@ router.get("/q_score",function(req,res){
   })
 })
 
+router.post("/send_appeal",function(req,res){
+  var ap_course = req.body.ap_course;
+  var done_teacher = req.body.done_teacher;
+  var ap_content = req.body.ap_content;
+  scoreCtr.send_appeal(sno,ap_course,done_teacher,ap_content,function(data){
+    if(data == "ok"){
+      res.json({
+        "status":"success"
+      })
+    }
+  })
+})
+
 
 router.get("/query_result",function(req,res){
   res.render("s_query_result",{

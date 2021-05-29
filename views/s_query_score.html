@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>学生查询界面</title>
     <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" /><!--CSS RESET-->
+	  <link href="css/animate.css" rel="stylesheet"/>
     <style>
       .regist{
         border: 1px solid #eee;
@@ -28,6 +30,41 @@
       * {
         font-family: 'Righteous',cursive;
       }
+
+      .htmleaf-content{
+      width: 300px;
+      margin:  20px auto;
+    }
+    .item {
+        max-width: 65%;
+        padding: 1em;
+        background: #eee;
+        display: none;
+        position: relative;
+        -webkit-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+        -moz-box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+        box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.15);
+        border-radius: 3px;
+        color: #000;
+      }
+
+      .item-close {
+        cursor: pointer;
+        right: 5px;
+        top: 5px;
+        position: absolute;
+        background: #222;
+        color: #fff;
+        border-radius: 100%;
+        font-size: 14px;
+        height: 24px;
+        line-height: 22px;
+        text-align: center;
+        width: 24px;
+      }
+
+
+
 
     </style>
   </head>
@@ -53,14 +90,16 @@
         </div>
       </div>
     </nav>
-    <div class="row">
+    <div >
         <div class="col-sm-12">
           <table id="example1" class="table table-bordered table-striped table-hover dataTable" role="grid"
             aria-describedby="example1_info">
             <thead>
-              <tr role="row">
+              <tr>
                 <th aria-label="课程名称" style="width: 175.4px;">课程名称</th>
                 <th aria-label="成绩" style="width: 128.68px;">成绩</th>
+                <th aria-label="成绩" style="width: 128.68px;">成绩录入时间</th>
+                <th aria-label="成绩" style="width: 128.68px;">任课老师</th>
                 <th aria-label="成绩" style="width: 128.68px;">成绩申诉</th>
               </tr>
             </thead>
@@ -70,7 +109,20 @@
           </table>
         </div>
       </div>
+
+      
+
+      <!-- 申诉弹窗 -->
+      <div id="item" class="item">
+        <h3>申诉原因</h3>
+        <textarea name="" id="appeal_content" cols="30" rows="5"></textarea>
+        <b class="item-close js-popup-close">x</b>
+        <button id="sure_appeal">确认提交</button>
+      </div>
+
     <script src="http://localhost:3000/js/jquery.min.js"></script>
+    <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    <script src="http://localhost:3000/js/jquery.popup.js"></script>
 </body>
 </html>
 <script>
@@ -86,9 +138,76 @@
   }
   
   function DataItem(item) {
-    this.$dom = $("<tr><td>"+item.courseName+"</td><td>"+item.score+"</td><td><button  class='btn btn-danger'>申诉</button></td></tr>");
+    var cur_time = new Date(item.cur_time).format("yyyy-MM-dd")
+    this.$dom = $("<tr><td>"+item.courseName+"</td><td>"+item.score+"</td><td>"+cur_time+"</td><td>"+item.realname1+"</td><td><div class='htmleaf-content htmleaf-demo'><a href='#' class='btn1 btn-danger btn' data-course='"+item.courseName+"' data-teacher="+item.realname1+">申诉</a></div></td></tr>");
     $("#showdata").append(this.$dom);
   }
 
 loadData();
+</script>
+
+<!-- 弹窗js -->
+<script>
+    var ap_cpurse = null;
+    var teacher = null;
+    $("#showdata").delegate(".btn1","click",function(){
+      ap_cpurse = $(this).data("course");
+      teacher = $(this).data("teacher");
+      $('#item').popup({
+		          time: 1000,
+		          classAnimateShow: 'flipInX',
+		          classAnimateHide: 'hinge',
+		          onPopupClose: function e() {
+		            // console.log('0')
+		          },
+		          onPopupInit: function e() {
+		            // console.log('1')
+		          }
+		        });
+    })
+
+
+    $("#sure_appeal").click(function(){
+        if(!$("#appeal_content").val()){
+          alert("请先填写你的申诉内容后提交")
+        }else(
+          $.ajax({
+            type:"POST",
+            url : "/send_appeal",
+            data: {"ap_course":ap_cpurse,"done_teacher":teacher,"ap_content":$("#appeal_content").val()},
+            success:function(data){
+              if(data.status == "success"){
+                alert("申诉提交成功！");
+                $("#appeal_content").val("");
+              }
+            }
+          })
+        )
+      })
+    
+</script>
+
+ <!-- 设置时间转换 -->
+<script>
+
+Date.prototype.format = function(fmt) { 
+     var o = { 
+        "M+" : this.getMonth()+1,                 //月份 
+        "d+" : this.getDate(),                    //日 
+        "h+" : this.getHours(),                   //小时 
+        "m+" : this.getMinutes(),                 //分 
+        "s+" : this.getSeconds(),                 //秒 
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+        "S"  : this.getMilliseconds()             //毫秒 
+    }; 
+    if(/(y+)/.test(fmt)) {
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+    }
+     for(var k in o) {
+        if(new RegExp("("+ k +")").test(fmt)){
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+         }
+     }
+    return fmt; 
+}  
 </script>
