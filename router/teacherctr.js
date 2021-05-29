@@ -232,6 +232,28 @@ router.post("/myself",upload.single("upload"),function(req,res){
   res.json({"status":1})
 })
 
+//处理学生申诉
+router.get("/t_appeal",function(req,res){
+  res.render("t_check_appeal",{
+    username: username1,
+  })
+})
+
+router.get("/t_deal_appeal",function(req,res){
+  scoreCtr.selectAppeal(jobno,function(data){
+    res.json({"data":data,"status":"success"})
+  })
+})
+
+router.post("/t_deal_appeal",function(req,res){
+  var sno = req.body.sno ;
+  var course = req.body.course ;
+  scoreCtr.dealAppeal(jobno,sno,course,function(data){
+    if(data=="ok"){
+      res.json({"status":"success"});
+    }
+  })
+})
 
 //将学生成绩写入excel文件
 router.post("/write_in",function(req,res){

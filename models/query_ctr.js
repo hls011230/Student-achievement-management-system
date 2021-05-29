@@ -16,7 +16,7 @@ User.query(query,function(err,rows){
 
 //查询该学生的排名
 exports.checkRank  = function(sno,callback){
-  var query = 'SELECT r.total,r.rnk from (SELECT *,(SELECT count(DISTINCT total) FROM (select sno,sum(score) total from score GROUP BY sno) b WHERE a.total<b.total)+1 AS rnk FROM (select sno,sum(score) total from score GROUP BY sno) AS a ORDER BY rnk) r';
+  var query = 'SELECT r.total,r.rnk from (SELECT *,(SELECT count(DISTINCT total) FROM (select sno,sum(score) total from score GROUP BY sno) b WHERE a.total<b.total)+1 AS rnk FROM (select sno,sum(score) total from score GROUP BY sno) AS a ORDER BY rnk) r where r.sno = '+sno+'';
     User.query(query,function(err,rows){
       if(err){
           console.log(err);

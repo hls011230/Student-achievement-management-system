@@ -56,3 +56,22 @@
     </script>
 </body>
 </html>
+<script>
+  function loadData(){
+  $.get("/teacher/t_deal_appeal",function(data){
+    var count = 0;
+    if(data.status == "success"){
+      $("#showdata").empty();
+      for(var i = 0 ; i < data.data.length; i ++){
+        if(data.data[i].done==0){
+          count ++;
+        }
+      }
+      if(count){
+        alert("你有"+count+"条成绩申诉未处理")
+      }
+    }
+  })
+}
+loadData();
+</script>

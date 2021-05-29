@@ -144,3 +144,31 @@ exports.innerXlsx  = function(tid,callback){
 }
 
 
+//查询学生的申诉
+
+exports.selectAppeal = function(jobno,callback){
+    var query = 'select * from appeal ap inner join student st on ap.ap_sno = st.sno where done_teacher = (select realname1 from teacher where jobno = '+jobno+')'
+    User.query(query,function(err,rows) {
+        if(err){
+            callback("err");
+            console.log(err);
+            return ;
+        }else{
+            callback(rows);
+        }
+    })
+}
+
+exports.dealAppeal = function(jobno,sno,course,callback){
+    var query = 'update appeal set done = 1 where done_teacher = (select realname1 from teacher where jobno = '+jobno+') and ap_sno = "'+sno+'" and ap_course = "'+course+'"'
+    User.query(query,function(err,rows) {
+        if(err){
+            callback("err");
+            console.log(err);
+            return ;
+        }else{
+            callback("ok");
+        }
+    })
+}
+
