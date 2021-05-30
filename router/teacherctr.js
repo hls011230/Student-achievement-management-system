@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var scoreCtr = require("../models/score_ctr");
 var formidable = require("formidable");
+var fn = require("../models/cod_appeal")
 var multer = require("multer")
 var upload = multer({
   dest:"images"
@@ -247,11 +248,22 @@ router.get("/t_deal_appeal",function(req,res){
 
 router.post("/t_deal_appeal",function(req,res){
   var sno = req.body.sno ;
-  var course = req.body.course ;
+  var course = req.body.course;
+  
   scoreCtr.dealAppeal(jobno,sno,course,function(data){
     if(data=="ok"){
       res.json({"status":"success"});
     }
+  })
+
+  scoreCtr.findStudentEmail(sno,function(data){
+    fn.send(data[0].email,course,username1)
+     .then(() => {
+        console.log("email sent success")
+    })
+    .catch(() => {
+      console.log("email sent fail")
+    }) 
   })
 })
 

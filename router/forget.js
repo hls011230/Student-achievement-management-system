@@ -9,7 +9,7 @@ const smtpTransport = require('nodemailer-smtp-transport');
 const Code = require("../database/Code.js")
 var fs = require("fs");
 var path = require("path");
-var fn = require("../database/cod")
+var fn = require("../models/cod")
 const assert = require('http-assert')
 var async = require("async");
 
@@ -42,14 +42,18 @@ router.post("/1", function(req,res){
     res.redirect("/student_forget_password/2")
 })
 
+//发送邮箱
+router.get("/2",function(req,res){
+  res.render("s_forget2")
+})
+
 router.post("/send",function(req,res) {
      var email = req.body.email;
-     name = email;
+     deleteemail(email,function () {})
      var checkCode = randomFns();
-     code = checkCode;
      fn.send(email,checkCode)
      .then(() => {
-        addemail(email,code,function(){})
+        addemail(email,checkCode,function(){})
         res.json({"status":1})
     })
     .catch(() => {
@@ -57,18 +61,12 @@ router.post("/send",function(req,res) {
     }) 
 })
 
-router.get("/2",function(req,res){
-    res.render("s_forget2")
-})
+
 
 router.post("/2", function(req,res){
     var em = req.body.email;
-    module.exports.e = em ;
     var ver_code = req.body.ver_code;
-    console.log(em);
-    console.log(ver_code);
     patchemail(em,ver_code,function (data) {
-        console.log(data);
         if (data == true){
             res.json({"status":1})
             deleteemail(em,function () {})

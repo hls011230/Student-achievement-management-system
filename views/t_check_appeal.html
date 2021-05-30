@@ -90,7 +90,7 @@
                 </tbody>
               </table>
             </div>
-          </div>
+        </div>
             
     </section>
     
@@ -114,17 +114,12 @@ function DataItem(item) {
     var done = null;
     if(item.done ==0){
         done="未处理"
-        this.$dom = $("<tr><td>"+item.class+"</td><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.ap_course+"</td><td>"+item.ap_reason+"</td><td>"+done+"</td><td><button class='btn btn-info deal' data-sno="+item.sno+" data-course="+item.ap_course+" >处理</button></td></tr>");
-    }else{
-        done="已处理"
-        this.$dom = $("<tr><td>"+item.class+"</td><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.ap_course+"</td><td>"+item.ap_reason+"</td><td>"+done+"</td><td><button class='btn btn-success' data-sno="+item.sno+" data-course="+item.ap_course+" >处理</button></td></tr>");
-    }
-    
+        this.$dom = $("<tr><td>"+item.class+"</td><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.ap_course+"</td><td>"+item.ap_reason+"</td><td>"+done+"</td><td><button class='btn btn-warning deal' data-sno="+item.sno+" data-course="+item.ap_course+" >处理</button></td></tr>");
+    } 
     $("#showdata").append(this.$dom);
 }
 
 loadData();
-
 
 $("#showdata").delegate(".deal","click",function(){
     $.ajax({
@@ -137,6 +132,5 @@ $("#showdata").delegate(".deal","click",function(){
             }
         }
     })
-
 })
 </script>

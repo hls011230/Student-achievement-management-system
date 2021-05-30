@@ -159,6 +159,8 @@ exports.selectAppeal = function(jobno,callback){
     })
 }
 
+
+//修改申诉状态
 exports.dealAppeal = function(jobno,sno,course,callback){
     var query = 'update appeal set done = 1 where done_teacher = (select realname1 from teacher where jobno = '+jobno+') and ap_sno = "'+sno+'" and ap_course = "'+course+'"'
     User.query(query,function(err,rows) {
@@ -168,6 +170,20 @@ exports.dealAppeal = function(jobno,sno,course,callback){
             return ;
         }else{
             callback("ok");
+        }
+    })
+}
+
+//查询申诉学生的邮箱
+exports.findStudentEmail = function(sno,callback){
+    var query = 'select email from student where sno = '+sno+''
+    User.query(query,function(err,rows) {
+        if(err){
+            callback("err");
+            console.log(err);
+            return ;
+        }else{
+            callback(rows);
         }
     })
 }
