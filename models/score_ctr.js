@@ -138,7 +138,8 @@ exports.innerXlsx  = function(tid,callback){
 			}
 		]);
         
-		fs.writeFileSync('static/xlsx/test1.xlsx',buffer,{'flag':'w'});
+		// fs.writeFileSync('router/xlsx/'+tid+'.xlsx',buffer,{'flag':'w'});
+        fs.writeFileSync('static/xlsx/aaa.xlsx',buffer,{'flag':'w'});
         callback("ok")
     });   
 }

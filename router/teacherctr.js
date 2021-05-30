@@ -1,9 +1,12 @@
 var express = require("express");
 var router = express.Router();
+var path = require("path")
+var fs = require("fs")
 var scoreCtr = require("../models/score_ctr");
 var formidable = require("formidable");
 var fn = require("../models/cod_appeal")
-var multer = require("multer")
+var multer = require("multer");
+const { json } = require("body-parser");
 var upload = multer({
   dest:"images"
 })
@@ -98,6 +101,11 @@ router.get("/s_course",function(req,res){
       "status":"success",
       "data": data
     })
+  })
+  scoreCtr.innerXlsx(jobno,function(data){
+    if(data == "err"){
+      return;
+    }
   })
 })
 
@@ -251,8 +259,8 @@ router.post("/t_deal_appeal",function(req,res){
   var course = req.body.course;
   
   scoreCtr.dealAppeal(jobno,sno,course,function(data){
-    if(data=="ok"){
-      res.json({"status":"success"});
+    if(data=="err"){
+      return;
     }
   })
 
@@ -260,20 +268,31 @@ router.post("/t_deal_appeal",function(req,res){
     fn.send(data[0].email,course,username1)
      .then(() => {
         console.log("email sent success")
+        res.json({"status":"success"});
     })
     .catch(() => {
-      console.log("email sent fail")
+      console.log("email sent fail");
+
     }) 
   })
 })
 
 //将学生成绩写入excel文件
-router.post("/write_in",function(req,res){
-  scoreCtr.innerXlsx(jobno,function(data){
-    if(data == "ok"){
-      res.json({"status":"success"})
-    }
-  })
-})
+// router.post("/write_in",function(req,res){
+    // let _path = path.resolve(__dirname, 'xlsx/'+jobno+'.xlsx');
+    // res.setHeader('Content-type', 'application/octet-stream');
+    // // res.setHeader('Content-Disposition', 'attachment;filename=1.pdf'); 
+    // res.setHeader('Content-Disposition', 'attachment;filename=abc.xlsx'); 
+    // var fileStream = fs.createReadStream(_path);
+    // fileStream.on('data', function (data) {
+    //     res.write(data, 'binary');
+    // });
+    // fileStream.on('end', function () {
+    //     res.end();
+    //     console.log('The file has been downloaded successfully!');
+    // });
+  
+  
+// })
 
 module.exports = router;
