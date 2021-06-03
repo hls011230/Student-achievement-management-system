@@ -129,6 +129,7 @@ function DataItem(i,item) {
     }
 
     $.post("/teacher/score_ctr",{"data":arr},function(data){
+      console.log(data)
         if(data.status == "success"){
           alert("数据添加成功");
           $(".sno").val("");

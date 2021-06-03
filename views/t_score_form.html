@@ -58,7 +58,7 @@
       </div>
       <div style="flex:3">
         <!-- <button id="write" class="btn btn-success">下载成绩单</button> -->
-        <a href="http://localhost:3000/xlsx/aaa.xlsx" download="aaa.xlsx" class="btn btn-success">下载成绩单</a>
+        <a href="http://localhost:3000/xlsx/学生成绩表.xlsx" download="学生成绩表.xlsx" class="btn btn-success">下载成绩单</a>
       </div>
     </div>
     
@@ -201,7 +201,7 @@ $("#showdata").delegate(".patchVal","blur",function(){
 $("#dim_check").click(function(){
   $.post("/teacher/s_ctr",{"d":$("#s_name").val()},function(data){
       if(data.status == "success"){
-      console.log(data.data)
+
         $("#showdata").empty();
         for(var i = 0 ; i < data.data.length; i ++){
           new DataItem(i,data.data[i]);
@@ -210,11 +210,7 @@ $("#dim_check").click(function(){
     })
 })
 
-// $("#write").click(function(){
-//   $.post("/teacher/write_in",function(data){
-  
-//     })
-// })
+
 
 
 $("#paging").delegate("a","click",function(){

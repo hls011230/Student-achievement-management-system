@@ -78,8 +78,9 @@
                   <tr role="row">
                     <th aria-label="成绩" style="width: 128.68px;">学生班级</th>
                     <th aria-label="成绩" style="width: 128.68px;">学生学号</th>
-                    <th aria-label="成绩" style="width: 128.68px;">学生姓名</th>
+                    <th aria-label="成绩" style="width: 100px;">学生姓名</th>
                     <th aria-label="课程名称" style="width: 90px;">申诉科目</th>
+                    <th aria-label="课程名称" style="width: 70px;">申诉成绩</th>
                     <th aria-label="成绩" style="width: 200px;">申诉内容</th>
                     <th aria-label="成绩" style="width: 100px;">处理状态</th>
                     <th aria-label="成绩" style="width: 128.68px;">操作</th>
@@ -90,8 +91,7 @@
                 </tbody>
               </table>
             </div>
-        </div>
-            
+        </div>         
     </section>
     
 </body>
@@ -104,17 +104,17 @@ function loadData(){
       if(data.status == "success"){
         $("#showdata").empty();
         for(var i = 0 ; i < data.data.length; i ++){
-          new DataItem(data.data[i]);
+          new DataItem(data.data[i],i);
         }
       }
     })
   }
   
-function DataItem(item) {
+function DataItem(item,i) {
     var done = null;
     if(item.done ==0){
         done="未处理"
-        this.$dom = $("<tr><td>"+item.class+"</td><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.ap_course+"</td><td>"+item.ap_reason+"</td><td>"+done+"</td><td><button class='btn btn-warning deal' data-sno="+item.sno+" data-course="+item.ap_course+" >处理</button></td></tr>");
+        this.$dom = $("<tr><td>"+item.class+"</td><td>"+item.sno+"</td><td>"+item.realname1+"</td><td>"+item.ap_course+"</td><td><b id=b"+i+">"+item.ap_score+"</b><input data-course="+item.ap_course+" data-sno="+item.sno+" id=i"+i+" class='patchVal' style='display:none' value="+item.ap_score+" type='text'></td><td>"+item.ap_reason+"</td><td>"+done+"</td><td><button class='btn btn-warning deal' data-sno="+item.sno+" data-course="+item.ap_course+" data-id="+i+">处理</button><button style='margin-left:5px' class='btn btn-danger deal_back' data-sno="+item.sno+" data-course="+item.ap_course+" >驳回</button></td></tr>");
     } 
     $("#showdata").append(this.$dom);
 }
@@ -122,9 +122,29 @@ function DataItem(item) {
 loadData();
 
 $("#showdata").delegate(".deal","click",function(){
-    $.ajax({
+  var num = $(this).data("id")
+  $("#b"+num+"").hide();
+  $("#i"+num+"").show();
+})
+$("#showdata").delegate(".patchVal","blur",function(){
+  $(this).hide();
+  $(this).siblings("b").show();
+  $.ajax({
         type:"POST",
         url : "/teacher/t_deal_appeal",
+        data : {"sno":$(this).data("sno"),"course":$(this).data("course"),"score":$(this).val()},
+        success : function(data){
+            if(data.status == "success"){
+                loadData();
+            }
+        }
+    })
+})
+
+$("#showdata").delegate(".deal_back","click",function(){
+    $.ajax({
+        type:"POST",
+        url : "/teacher/t_deal_back",
         data : {"sno":$(this).data("sno"),"course":$(this).data("course")},
         success : function(data){
             if(data.status == "success"){

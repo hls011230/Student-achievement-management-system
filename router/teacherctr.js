@@ -6,7 +6,9 @@ var scoreCtr = require("../models/score_ctr");
 var formidable = require("formidable");
 var fn = require("../models/cod_appeal")
 var multer = require("multer");
+var async = require("async")
 const { json } = require("body-parser");
+const { all } = require("./indexctr");
 var upload = multer({
   dest:"images"
 })
@@ -87,7 +89,7 @@ router.get("/s_ctr",function(req,res){
 
 router.post("/s_ctr",function(req,res){
   var name = req.body.d
-  scoreCtr.dim_checkScore(name,function(data){
+  scoreCtr.dim_checkScore(name,jobno,function(data){
     res.json({
       "status":"success",
       "data": data
@@ -110,25 +112,44 @@ router.get("/s_course",function(req,res){
 })
 
 //增加学生成绩
+var count = [];
 router.post("/score_ctr",async function(req,res){
     var obj = req.body.data;
-    var count = 0;
-    for(var i = 0 ; i < obj.length ; i ++){
+    var ind = 0;
+    for (var i in obj) {
       if(obj[i].sno != null && obj[i].score !=null){
         scoreCtr.addScore(obj[i].course,obj[i].sno,obj[i].score,jobno,function(data){
           if(data == "err"){
-            count++;
-          }else if(data == "ok"){
-            count++;
+            return;
+          }else {
+            console.log(data);
+            count.push(data);
+            ind++
           }
-        })
+        });
+        
       }
     }
-    res.json({
-      "status":"success",
-      "data": count,
-    })
-})
+    if(ind != 0){
+      console.log(count);
+        res.json({
+          "status":"success",
+          "data": count,
+        })
+    }
+    
+}
+    // async function a2(){
+    //   await a1();
+    //   console.log(count);
+    //   res.json({
+    //     "status":"success",
+    //     "data": count,
+    //   })
+    // }
+    // a2();
+    
+)
 
 router.get("/score_form",function(req,res) {
   if(username1){
@@ -257,8 +278,15 @@ router.get("/t_deal_appeal",function(req,res){
 router.post("/t_deal_appeal",function(req,res){
   var sno = req.body.sno ;
   var course = req.body.course;
+  var score = req.body.score;
   
   scoreCtr.dealAppeal(jobno,sno,course,function(data){
+    if(data=="err"){
+      return;
+    }
+  })
+
+  scoreCtr.updataScore(sno,course,score,function(data){
     if(data=="err"){
       return;
     }
@@ -277,22 +305,28 @@ router.post("/t_deal_appeal",function(req,res){
   })
 })
 
-//将学生成绩写入excel文件
-// router.post("/write_in",function(req,res){
-    // let _path = path.resolve(__dirname, 'xlsx/'+jobno+'.xlsx');
-    // res.setHeader('Content-type', 'application/octet-stream');
-    // // res.setHeader('Content-Disposition', 'attachment;filename=1.pdf'); 
-    // res.setHeader('Content-Disposition', 'attachment;filename=abc.xlsx'); 
-    // var fileStream = fs.createReadStream(_path);
-    // fileStream.on('data', function (data) {
-    //     res.write(data, 'binary');
-    // });
-    // fileStream.on('end', function () {
-    //     res.end();
-    //     console.log('The file has been downloaded successfully!');
-    // });
+router.post("/t_deal_back",function(req,res){
+  var sno = req.body.sno ;
+  var course = req.body.course;
   
-  
-// })
+  scoreCtr.dealAppeal(jobno,sno,course,function(data){
+    if(data=="err"){
+      return;
+    }
+  })
+
+  scoreCtr.findStudentEmail(sno,function(data){
+    fn.back(data[0].email,course,username1)
+     .then(() => {
+        console.log("email sent success")
+        res.json({"status":"success"});
+    })
+    .catch(() => {
+      console.log("email sent fail");
+
+    }) 
+  })
+})
+
 
 module.exports = router;

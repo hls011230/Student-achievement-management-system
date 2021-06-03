@@ -45,5 +45,33 @@ const nodemailer = require('nodemailer')
         })
      }
 
-     module.exports = { send }
+     function back(e,course,teacher) {
+        const mail = {
+            // 发件人 邮箱  '昵称<发件人邮箱>'
+            from: '学生成绩管理系统<3026683545@qq.com>',
+            // 主题
+            subject: '成绩申诉',
+            // 收件人 的邮箱 可以是其他邮箱 不一定是qq邮箱
+            to: '"'+e+'"',
+            // 内容
+            text: `成绩申诉成功` ,
+            //这里可以添加html标签
+            html: `
+            <p>同学你好！</p>
+            <p>你申诉的<strong style="color: red;">${course}</strong>成绩已被 <strong style="color: skyblue;">${teacher}</strong>老师驳回</p>`
+         }
+
+         return new Promise((resolve, reject)=>{
+            transporter.sendMail(mail, (err, data) => {
+                if(err){
+                    reject()    //出错
+                    console.log(err);
+                }else{
+                    resolve()    //成功
+                }
+            })
+        })
+     }
+
+     module.exports = { send , back }
 

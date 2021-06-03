@@ -139,7 +139,7 @@
   
   function DataItem(item) {
     var cur_time = new Date(item.cur_time).format("yyyy-MM-dd")
-    this.$dom = $("<tr><td>"+item.courseName+"</td><td>"+item.score+"</td><td>"+cur_time+"</td><td>"+item.realname1+"</td><td><div class='htmleaf-content htmleaf-demo'><a href='#' class='btn1 btn-danger btn' data-course='"+item.courseName+"' data-teacher="+item.realname1+">申诉</a></div></td></tr>");
+    this.$dom = $("<tr><td>"+item.courseName+"</td><td>"+item.score+"</td><td>"+cur_time+"</td><td>"+item.realname1+"</td><td><div class='htmleaf-content htmleaf-demo'><a href='#' class='btn1 btn-danger btn' data-course='"+item.courseName+"' data-teacher="+item.realname1+" data-score="+item.score+">申诉</a></div></td></tr>");
     $("#showdata").append(this.$dom);
   }
 
@@ -150,9 +150,11 @@ loadData();
 <script>
     var ap_cpurse = null;
     var teacher = null;
+    var ap_score = null
     $("#showdata").delegate(".btn1","click",function(){
       ap_cpurse = $(this).data("course");
       teacher = $(this).data("teacher");
+      ap_score = $(this).data("score")
       $('#item').popup({
 		          time: 1000,
 		          classAnimateShow: 'flipInX',
@@ -174,7 +176,7 @@ loadData();
           $.ajax({
             type:"POST",
             url : "/send_appeal",
-            data: {"ap_course":ap_cpurse,"done_teacher":teacher,"ap_content":$("#appeal_content").val()},
+            data: {"ap_course":ap_cpurse,"done_teacher":teacher,"ap_content":$("#appeal_content").val(),"ap_score":ap_score},
             success:function(data){
               if(data.status == "success"){
                 alert("申诉提交成功！");

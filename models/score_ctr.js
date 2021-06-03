@@ -35,7 +35,7 @@ exports.scoreResult = async function (tid,callback) {
 
 //查询所有学生成绩
 exports.checkScore  = function(jobno,callback){
-var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score sc inner join student st on sc.sno = st.sno inner join course co on sc.courseNo = co.courseNo where cur_teacher = '+jobno+'';
+var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score sc inner join student st on sc.sno = st.sno inner join course co on sc.courseNo = co.courseNo where cur_teacher = '+jobno+' order by courseName';
   User.query(query,function(err,rows){
     if(err){
         console.log(err);
@@ -47,8 +47,8 @@ var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score 
 }
 
 //模糊查询学生成绩
-exports.dim_checkScore = function(name,callback) {
- var query = 'call mypro01("'+name+'");';
+exports.dim_checkScore = function(name,jobno,callback) {
+ var query = 'call mypro01("'+name+'","'+jobno+'");';
   User.query(query,function(err,rows){
     if(err){
         console.log(err);
@@ -62,13 +62,26 @@ exports.dim_checkScore = function(name,callback) {
 
 //添加学生成绩
 exports.addScore = function(course,sno,score,jobno,callback){
+    var sql = 'select * from score where sno = '+sno+' and courseNo = (select courseNo from course where courseName = "'+course+'")'
     var query = 'insert into score (sno,courseNo,cur_time,cur_teacher,score) VALUES ("'+sno+'",(select courseNo from course where courseName = "'+course+'"),now(),"'+jobno+'",'+score+');';
-    User.query(query,function(err,rows){
+    User.query(sql,function(err,rows){
       if(err){
           callback("err")
           return ;
+      }
+
+      if(rows[0]){
+          callback(sno+"student have " + course + "'s score");
       }else{
-          callback("ok")
+        User.query(query,function(err,rows){
+            if(err){
+                callback("err")
+                return ;
+            }else{
+                callback(sno+"student add " + course + "'s score success");
+            }
+
+        })
       }
     })
 }
@@ -115,9 +128,10 @@ exports.selectRank = function(callback){
 
 //将学生成绩表的内容写入xlsx文件
 
-exports.innerXlsx  = function(tid,callback){
+exports.innerXlsx  = function(jobno,callback){
+    
     var data=[];
-    var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score sc inner join student st on sc.sno = st.sno inner join course co on sc.courseNo = co.courseNo  ';
+    var query = 'select  st.sno , st.realname1 , co.courseName, sc.score from score sc inner join student st on sc.sno = st.sno inner join course co on sc.courseNo = co.courseNo where cur_teacher = '+jobno+' ORDER BY courseName  ';
       User.query(query,function(err,rows){
         if(rows)
 		{
@@ -137,10 +151,12 @@ exports.innerXlsx  = function(tid,callback){
 				data:data
 			}
 		]);
-        
-		// fs.writeFileSync('router/xlsx/'+tid+'.xlsx',buffer,{'flag':'w'});
-        fs.writeFileSync('static/xlsx/aaa.xlsx',buffer,{'flag':'w'});
-        callback("ok")
+        if(fs.existsSync(`static/xlsx/学生成绩表.xlsx`)){
+            fs.unlinkSync(`static/xlsx/学生成绩表.xlsx`);
+        }else{
+            fs.writeFileSync('static/xlsx/学生成绩表.xlsx',buffer,{'flag':'w'});
+            callback("ok")
+        }    
     });   
 }
 
@@ -170,7 +186,7 @@ exports.dealAppeal = function(jobno,sno,course,callback){
             console.log(err);
             return ;
         }else{
-            callback("ok");
+            callback();
         }
     })
 }

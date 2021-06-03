@@ -46,7 +46,8 @@ router.post("/send_appeal",function(req,res){
   var ap_course = req.body.ap_course;
   var done_teacher = req.body.done_teacher;
   var ap_content = req.body.ap_content;
-  scoreCtr.send_appeal(sno,ap_course,done_teacher,ap_content,function(data){
+  var ap_score = req.body.ap_score;
+  scoreCtr.send_appeal(sno,ap_course,done_teacher,ap_content,ap_score,function(data){
     if(data == "ok"){
       res.json({
         "status":"success"

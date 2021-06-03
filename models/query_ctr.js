@@ -27,8 +27,8 @@ exports.checkRank  = function(sno,callback){
 }
 
 //学生申诉成绩
-exports.send_appeal = function(sno,course,teacher,content,callback){
-  var query = 'insert into appeal values("'+sno+'","'+course+'","'+teacher+'",now(),"'+content+'",0)';
+exports.send_appeal = function(sno,course,teacher,content,score,callback){
+  var query = 'insert into appeal values("'+sno+'","'+course+'",'+score+',"'+teacher+'",now(),"'+content+'",0)';
     User.query(query,function(err,rows){
       if(err){
           console.log(err);

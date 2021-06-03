@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="http://localhost:3000/css/forget.css">
     <link rel="stylesheet" href="http://localhost:3000/css/bootstrap.css">
     <script src="http://localhost:3000/js/jquery.min.js"></script>
+    <style>
+        dd{
+            display: flex;
+            flex: 2;
+        }
+    </style>
 </head>
 <body>
     <div class="content">
@@ -47,35 +53,44 @@
          </div>
        
          <div class="forget-pwd">
+        <div>
             <dl>
-       
+    
                 <dt>邮箱：</dt>
             
                 <dd>
             
-                 <input type="email" name="email" id="email"/>
-
-                 <button class="btn" id="send_code">发送验证码</button>
+                    <div>
+                    <input type="email" name="email" id="email"/>
+                    </div>
+    
+                    <div>
+                    <button class="btn" id="send_code">发送验证码</button>
+                    </div>
+            
+                </dd>
+            
+            
+                </dl>
+        </div>
+       
+        <div>
+            <dl>
+       
+                <dt style="margin-top:  20px;">邮箱验证码:</dt>
+            
+                <dd>
+            
+                 <div>
+                    <input type="number" name="ver_code" id="ver_code" style="margin-top:  20px;"/>
+                 </div>
             
                 </dd>
             
                 <div class="clears"></div>
             
                </dl>
-       
-          <dl>
-       
-           <dt>邮箱验证码</dt>
-       
-           <dd>
-       
-            <input type="number" name="ver_code" id="ver_code" />
-       
-           </dd>
-       
-           <div class="clears"></div>
-       
-          </dl>
+        </div>
        
           
           <div class="btn btn-warning" style="margin-left:  160px;">
@@ -92,29 +107,48 @@
 </body>
 </html>
 <script>
-    $("#send_code").click(function(){
-        
+    var emailStatus = false;
+    $("#email").blur(function(){
+        if(!/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]{2,5}$/.test($(this).val())) {
+            warnFun($(this),"请输入正确的Email")
+        }
+    })
 
-        $.ajax({
-        type:"POST",
-        url :"/student_forget_password/send",
-        data:{"email":$("#email").val()},
-        async:false,
-        success:function(data){
-            if(data.status == 1){
-                alert("验证码已发送")
-            }
-     }
- })
- })
+    $("#send_code").click(function(){
+        if(emailStatus == true){
+            $.ajax({
+                type:"POST",
+                url :"/student_forget_password/send",
+                data:{"email":$("#email").val()},
+                async:false,
+                success:function(data){
+                    if(data.status == 1){
+                        alert("验证码已发送")
+                    }
+                }
+            })
+        }else{
+            alert("请确保你的邮箱正确")
+        }    
+})
 
     $("#next").click(function(){
-        $.post("/student_forget_password/2",{"email":$("#email").val(),"ver_code":$("#ver_code").val()},function(data){
+        if($("#email").val()){
+            $.post("/student_forget_password/2",{"email":$("#email").val(),"ver_code":$("#ver_code").val()},function(data){
             if(data.status == 1){
                 window.location = "/student_forget_password/3"
             }else{
                 alert("验证码错误")
             }
         })
+        }else{
+            warnFun($("#ver_code"),"请先填写你的邮箱")
+        }
     })
+
+    function warnFun(dom,value) {
+    dom.parent().addClass("has-error");
+    dom.siblings("div.control-label").remove();
+    dom.after("<div class='control-label'>"+value+"</div>")
+  }
 </script>
