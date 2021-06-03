@@ -295,7 +295,7 @@ router.post("/t_deal_appeal",function(req,res){
   scoreCtr.findStudentEmail(sno,function(data){
     fn.send(data[0].email,course,username1)
      .then(() => {
-        console.log("email sent success")
+        console.log("email sent success");
         res.json({"status":"success"});
     })
     .catch(() => {

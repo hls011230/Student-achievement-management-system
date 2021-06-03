@@ -80,6 +80,10 @@ var fn =  function(){
       alert("重复密码和密码不一致")
       return;
     }
+    if(!classid) {
+      alert("班级格式错误")
+      return;
+    }
     
     $.ajax({
       "type": "POST",

@@ -61,8 +61,7 @@ exports.check_username_Regist = function(req,res){
 
 exports.check_class_Regist = function(req,res){
   var classid = req.body.classid;
-  // 去数据库查询有无匹配email地址
-  var mysqlQuery = 'select * from class where class = "'+classid+'"';
+  var mysqlQuery = 'select * from class where classNo = "'+classid+'"';
   User.query(mysqlQuery,function(err,rows,fields){
     if(err){
       console.log(err);

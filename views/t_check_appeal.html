@@ -127,14 +127,16 @@ $("#showdata").delegate(".deal","click",function(){
   $("#i"+num+"").show();
 })
 $("#showdata").delegate(".patchVal","blur",function(){
-  $(this).hide();
-  $(this).siblings("b").show();
-  $.ajax({
+    alert("操作正在进行中，请稍候 ....");
+    $(this).hide();
+    $(this).siblings("b").show();
+    $.ajax({
         type:"POST",
         url : "/teacher/t_deal_appeal",
         data : {"sno":$(this).data("sno"),"course":$(this).data("course"),"score":$(this).val()},
         success : function(data){
             if(data.status == "success"){
+                alert("操作成功");
                 loadData();
             }
         }
@@ -142,12 +144,14 @@ $("#showdata").delegate(".patchVal","blur",function(){
 })
 
 $("#showdata").delegate(".deal_back","click",function(){
+    alert("操作正在进行中，请稍候 ....");
     $.ajax({
         type:"POST",
         url : "/teacher/t_deal_back",
         data : {"sno":$(this).data("sno"),"course":$(this).data("course")},
         success : function(data){
             if(data.status == "success"){
+                alert("操作成功");
                 loadData();
             }
         }
