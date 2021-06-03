@@ -68,7 +68,7 @@
         
             <dd>
         
-             <input type="password" />
+             <input type="password" id="repassword"/>
         
             </dd>
         
@@ -99,4 +99,10 @@
             }
         })
     })
+
+    function warnFun(dom,value) {
+    dom.parent().addClass("has-error");
+    dom.siblings("div.control-label").remove();
+    dom.after("<div class='control-label'>"+value+"</div>")
+  }
 </script>

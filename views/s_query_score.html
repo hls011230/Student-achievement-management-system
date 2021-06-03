@@ -116,7 +116,7 @@
       <div id="item" class="item">
         <h3>申诉原因</h3>
         <textarea name="" id="appeal_content" cols="30" rows="5"></textarea>
-        <b class="item-close js-popup-close">x</b>
+        <b class="item-close js-popup-close" id="appeal_close">x</b>
         <button id="sure_appeal">确认提交</button>
       </div>
 
@@ -181,6 +181,7 @@ loadData();
               if(data.status == "success"){
                 alert("申诉提交成功！");
                 $("#appeal_content").val("");
+                $('#appeal_close').trigger("click");
               }
             }
           })
