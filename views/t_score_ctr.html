@@ -50,23 +50,30 @@
       </div>
       
     </nav>
-    <div>
-          <div class="form-group">
-            <label class="control-label"  for="exampleInputSex">选择学生考试科目</label>
+    <div style="margin-left: 15px;  display: flex; flex: 2;">
+          <div class="form-group" style="flex: 1;">
+            <label class="control-label"  for="exampleInput">选择学生考试科目</label>
             <select class="form-control"  id="select_course" >
             </select>
           </div>  
-      </div>
+
+          <div class="form-group" style="margin-left: 15px; flex: 1;">
+            <label class="control-label"  for="exampleInput">选择填写班级</label>
+            <select class="form-control"  id="select_class" >
+            </select>
+          </div>
     </div>
     <div class="">
       <div class="col-sm-12">
         <table id="example1" class="table table-bordered table-striped table-hover dataTable" role="grid"
           aria-describedby="example1_info">
           <thead>
-            <tr role="row">
-              <th aria-label="课程名称" style="width: 175.4px;">课程名称</th>
-              <th aria-label="学生学号" style="width: 149.8px;">学生学号</th>
-              <th aria-label="成绩" style="width: 128.68px;">成绩</th>
+            <tr>
+              <th aria-label="课程名称" style="width: 100px;">课程名称</th>
+              <th aria-label="学生学号" style="width: 100.8px;">学生班级</th>
+              <th aria-label="学生学号" style="width: 100.8px;">学生学号</th>
+              <th aria-label="学生学号" style="width: 149.8px;">学生姓名</th>
+              <th aria-label="成绩" style="width: 100.68px;">成绩</th>
             </tr>
           </thead>
           <tbody id="showdata">
@@ -85,37 +92,65 @@
 <script>
 $.get("/teacher/s_course",function(data){
       if(data.status == "success"){
-        for(var i = 0 ; i < data.data.length; i ++){
-          new DataOption(i,data.data[i]);
+        for(var i = 0 ; i < data.course.length; i ++){
+          new DataOption_course(i,data.course[i]);
         }
-        first();
+        for(var i = 0 ; i < data.s_class.length; i ++){
+          new DataOption_class(i,data.s_class[i]);
+        }
+        load();
       }
 })
 
+
+
+
+
+function load(){
+  $.ajax({
+    type : "GET",
+    url : "/teacher/s_study",
+    data : {"course":$("#select_course").val(),"class":$("#select_class").val()},
+    success : function(data){
+      for (const i in data.data) {
+          new DataItem(i,data.data[i])
+      }
+    }
+  })
+}
+
     
-var $inputCpurse = $("#select_course");
-$inputCpurse.blur(function(){
+$("#select_course").blur(function(){
   $("#showdata").empty();
-  for(var i = 0 ; i < 9; i ++){
-          new DataItem(i,$("#select_course").val());
-        }
+  load();
+})
+$("#select_class").blur(function(){
+  $("#showdata").empty();
+  load();
 })
 
 function first(){
   $("#showdata").empty();
   for(var i = 0 ; i < 9; i ++){
-          new DataItem(i,$("#select_course").val());
+          new DataItem(i,$("#select_course").val(),$("#select_class").val());
         }
 }
 
 
   
-function DataOption(i,item) {
+function DataOption_course(i,item) {
   this.$dom = $("<option>"+item.courseName+"</option>");
   $("#select_course").append(this.$dom);
 }
+
+function DataOption_class(i,item) {
+  this.$dom = $("<option>"+item.class+"</option>");
+  $("#select_class").append(this.$dom);
+}
+
+
 function DataItem(i,item) {
-  this.$dom = $("<tr role='row'><td><b>"+item+"</b></td><td><input id=sno"+i+" type='text' class='form-control sno'  placeholder='请输入学生学号'/></td><td><input id=score"+i+" type='text' class='form-control score'  placeholder='请输入学生成绩'/></td>");
+  this.$dom = $("<tr role='row'><td><b>"+item.courseName+"</b></td><td><b>"+item.class+"</b></td><td><b id=sno"+i+" class='sno' data-sno="+item.sno+">"+item.sno+"</b></td><td><b>"+item.realname1+"</b></td><td><input id=score"+i+" type='text' class='form-control score'  placeholder='请输入学生成绩'/></td>");
   $("#showdata").append(this.$dom);
 }
 
@@ -123,19 +158,24 @@ function DataItem(i,item) {
 //增加
   $("#posBtn").click(function(){
     var arr  = [] ;
-    for(var i = 0 ; i < 9; i ++){
-         let obj = {"course":$("#select_course").val(),"sno":$("#sno"+i+"").val(),"score":$("#score"+i+"").val()};
-         arr.push(obj)
+    for(var i = 0 ; i < $("table tbody tr").length; i ++){
+      var obj;
+      if($("#score"+i+"").val()==''){
+        obj = {"course":$("#select_course").val(),"sno":$("#sno"+i+"").data("sno"),"score":0};
+      }else{
+        obj = {"course":$("#select_course").val(),"sno":$("#sno"+i+"").data("sno"),"score":$("#score"+i+"").val()};
+      }
+        arr.push(obj)
     }
 
     $.post("/teacher/score_ctr",{"data":arr},function(data){
-      console.log(data)
         if(data.status == "success"){
-          alert("数据添加成功");
-          $(".sno").val("");
+          var a = '';
+          for (const i in data.data) {
+            a +=`${data.data[i]} \n`
+          }
+          alert(a);
           $(".score").val("");
-        }else{
-          alert("第"+data.data+"条数据添加失败")
         }
     })
   })

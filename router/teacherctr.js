@@ -101,54 +101,62 @@ router.get("/s_course",function(req,res){
   scoreCtr.checkCourse(jobno,function(data){
     res.json({
       "status":"success",
-      "data": data
+      "course": data.course,
+      "s_class" :data.class
     })
-  })
-  scoreCtr.innerXlsx(jobno,function(data){
-    if(data == "err"){
-      return;
-    }
   })
 })
 
+router.get("/s_study",function(req,res){
+  var course = req.query.course;
+  var s_class = req.query.class;
+  scoreCtr.checkStudy(jobno,course,s_class,function(data){
+    
+    res.json({"status":"success","data":data});
+  })
+
+})
+
 //增加学生成绩
-var count = [];
+
 router.post("/score_ctr",async function(req,res){
     var obj = req.body.data;
-    var ind = 0;
-    for (var i in obj) {
-      if(obj[i].sno != null && obj[i].score !=null){
-        scoreCtr.addScore(obj[i].course,obj[i].sno,obj[i].score,jobno,function(data){
-          if(data == "err"){
-            return;
-          }else {
-            console.log(data);
-            count.push(data);
-            ind++
-          }
-        });
-        
-      }
-    }
-    if(ind != 0){
-      console.log(count);
-        res.json({
-          "status":"success",
-          "data": count,
-        })
-    }
-    
-}
-    // async function a2(){
-    //   await a1();
-    //   console.log(count);
-    //   res.json({
-    //     "status":"success",
-    //     "data": count,
-    //   })
+    scoreCtr.addScore(obj,jobno,function(data){
+      console.log(data);
+          res.json({
+            "status":"success",
+            "data": data,
+          })
+    })
+    // for (var i = 0 ; i <= obj.length ; i++) {
+    //   if(i == obj.length){
+    //      console.log(count);
+    //       res.json({
+    //         "status":"success",
+    //         "data": count,
+    //       })
+    //       return;
+    //   }
+    //   if(obj[i].score == ''){
+    //     let s = 0;
+    //     scoreCtr.addScore(obj[i].course,obj[i].sno,s,jobno,function(data){
+    //       if(data == "err"){
+    //         return;
+    //       }else {
+    //         count.push(data);
+    //       }
+    //     });
+    //   }else{
+    //     scoreCtr.addScore(obj[i].course,obj[i].sno,obj[i].score,jobno,function(data){
+    //       if(data == "err"){
+    //         return;
+    //       }else {
+    //         count.push(data);
+    //       }
+    //     });
+    //   }
     // }
-    // a2();
-    
+}   
 )
 
 router.get("/score_form",function(req,res) {
@@ -159,6 +167,12 @@ router.get("/score_form",function(req,res) {
 }else{
   res.render('t_login');
 }
+
+  scoreCtr.innerXlsx(jobno,function(data){
+    if(data == "err"){
+      return;
+    }
+  })
 })
 
 //删除学生成绩

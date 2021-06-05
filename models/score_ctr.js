@@ -1,21 +1,40 @@
 var User = require("./User");
 var async = require("async");
 var xlsx = require("node-xlsx")
-var fs = require("fs")
+var fs = require("fs");
 
 
 //查询老师任教课程
 exports.checkCourse  = function(tid,callback){
+    var course = [];
+    var sql = 'select s.class from t_schedule ts inner join student s on ts.classNo = s.class inner join course c on ts.courseNo = c.courseNo where ts.jobno = "'+tid+'" GROUP BY s.class'
     var query = 'select * from t_schedule ts inner join course co on ts.courseNo = co.courseNo where jobno = "'+tid+'" group by ts.courseNo ';
       User.query(query,function(err,rows){
         if(err){
             console.log(err);
             return;
         }
-        callback(rows)
-        
+        course = rows;
+        User.query(sql,function(err,result){
+            if(err){
+                console.log(err);
+                return;
+            }
+            callback({"course":course,"class":result})
         })
-    }
+    })
+}
+
+exports.checkStudy = function(jobno,course,s_class,callback){
+    var query = "select * from t_schedule ts inner join student s on ts.classNo = s.class inner join course c on ts.courseNo = c.courseNo where ts.jobno = '"+jobno+"' and s.class = '"+s_class+"' and c.courseName = '"+course+"'"
+    User.query(query,function(err,rows){
+        if(err){
+            console.log(err);
+            return;
+        }
+        callback(rows);
+    })
+}
 
 //成绩报告 ~~
 exports.scoreResult = async function (tid,callback) {
@@ -61,29 +80,36 @@ exports.dim_checkScore = function(name,jobno,callback) {
 
 
 //添加学生成绩
-exports.addScore = function(course,sno,score,jobno,callback){
-    var sql = 'select * from score where sno = '+sno+' and courseNo = (select courseNo from course where courseName = "'+course+'")'
-    var query = 'insert into score (sno,courseNo,cur_time,cur_teacher,score) VALUES ("'+sno+'",(select courseNo from course where courseName = "'+course+'"),now(),"'+jobno+'",'+score+');';
-    User.query(sql,function(err,rows){
-      if(err){
-          callback("err")
-          return ;
-      }
-
-      if(rows[0]){
-          callback(sno+"student have " + course + "'s score");
-      }else{
-        User.query(query,function(err,rows){
+exports.addScore = function(arr,jobno,callback){
+    var count = new Array();
+    for (const i in arr) {
+        var sql = 'select * from score where sno = '+arr[i].sno+' and courseNo = (select courseNo from course where courseName = "'+arr[i].course+'")'
+        var query = 'insert into score (sno,courseNo,cur_time,cur_teacher,score) VALUES ("'+arr[i].sno+'",(select courseNo from course where courseName = "'+arr[i].course+'"),now(),"'+jobno+'",'+arr[i].score+');';
+        User.query(sql,function(err,rows){
             if(err){
-                callback("err")
+                console.log(err);
                 return ;
-            }else{
-                callback(sno+"student add " + course + "'s score success");
             }
-
-        })
-      }
-    })
+            if(rows[0]){
+                count.push(arr[i].sno+" student have " + arr[i].course + "'s score");
+                if(i == arr.length-1){
+                    callback(count)
+                }
+            }else{
+                User.query(query,function(err,rows){
+                    if(err){
+                        console.log(err);
+                        return ;
+                    }else{
+                        count.push(arr[i].sno+" student add " + arr[i].course + "'s score success");
+                        if(i == arr.length-1){
+                            callback(count)
+                        }
+                    }
+                })
+            }
+        })    
+    }
 }
 
 //删除学生成绩
